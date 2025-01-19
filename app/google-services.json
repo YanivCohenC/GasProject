@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "542273364299",
+    "firebase_url": "https://gasproject-461fe-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "gasproject-461fe",
+    "storage_bucket": "gasproject-461fe.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:542273364299:android:c62267a9a00bb396dd08ce",
+        "android_client_info": {
+          "package_name": "com.yaniv.gasproject"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDPuFW_grsUj0jA_tHlMsLpM0MFrvz1mXQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
