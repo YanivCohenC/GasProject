@@ -18,4 +18,5 @@
     <string name="desc_fuel_type">Toggle fuel type</string>
     <string name="desc_nearby">Show nearby stations</string>
     <string name="desc_sort">Toggle sort method</string>
+    <string name="drivetoStation">נווט לתחנה</string>
 </resources>

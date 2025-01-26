@@ -38,6 +38,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
     private LocationHelper locationHelper;
     private GasStationDataManager dataManager;
 
+    /** @noinspection deprecation*/
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {

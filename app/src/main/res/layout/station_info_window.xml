@@ -23,7 +23,7 @@
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:layout_marginTop="8dp"
-        android:text="🚗 נווט לתחנה"
+        android:text="@string/drivetoStation"
         android:textSize="12sp"
         android:textAllCaps="false"
         android:backgroundTint="#0077cc" />
