@@ -1,4 +1,4 @@
-package com.yaniv.gasproject.DatabaseHandler;
+package com.yaniv.gasproject.dao;
 
 import com.yaniv.gasproject.dm.GasStation;
 

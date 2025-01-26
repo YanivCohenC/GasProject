@@ -7,6 +7,7 @@ public class GasStation {
     private GPS gps;
     private String opening_hours;
     private FuelPrices fuel_prices;
+    private float distance;
 
     // No-argument constructor required for Firebase
     public GasStation() {
@@ -17,6 +18,7 @@ public class GasStation {
         this.gps = new GPS(0, 0);
         this.opening_hours = "";
         this.fuel_prices = new FuelPrices(0, 0, 0);
+        this.distance = 0;
     }
 
     public GasStation(int id, String address, String company, GPS gps, String opening_hours, FuelPrices prices) {
@@ -26,9 +28,18 @@ public class GasStation {
         this.gps = gps; // coordinates
         this.opening_hours = opening_hours;
         this.fuel_prices = prices;
+        this.distance = 0;
     }
 
     // Getters and setters
+    public float getDistance() {
+        return this.distance;
+    }
+
+    public void setDistance(float distance) {
+        this.distance = distance;
+    }
+
     public int getId() {
         return this.id;
     }

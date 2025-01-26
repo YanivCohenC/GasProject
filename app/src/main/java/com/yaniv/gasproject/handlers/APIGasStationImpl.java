@@ -1,7 +1,6 @@
-package com.yaniv.gasproject.GasStationsHandler;
+package com.yaniv.gasproject.handlers;
 
 import static java.lang.Double.max;
-import static java.lang.Double.min;
 
 import com.yaniv.gasproject.dm.FuelPrices;
 import com.yaniv.gasproject.dm.GPS;

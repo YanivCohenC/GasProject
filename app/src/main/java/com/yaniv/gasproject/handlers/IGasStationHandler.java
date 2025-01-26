@@ -1,4 +1,4 @@
-package com.yaniv.gasproject.GasStationsHandler;
+package com.yaniv.gasproject.handlers;
 
 import com.yaniv.gasproject.dm.GasStation;
 

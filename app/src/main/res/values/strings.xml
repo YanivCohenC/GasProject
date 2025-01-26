@@ -1,3 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">GasProject</string>
+    <string name="search_hint">Search by address</string>
+    
+    <!-- Button text -->
+    <string name="fuel_type_95">Type: 95</string>
+    <string name="fuel_type_diesel">Type: Diesel</string>
+    <string name="nearby_show">Nearby: Show</string>
+    <string name="nearby_hide">Nearby: Hide</string>
+    <string name="sort_by_distance">Sort: Distance</string>
+    <string name="sort_by_price">Sort: Price</string>
+    
+    <!-- Content descriptions -->
+    <string name="desc_zoom_in">Zoom in</string>
+    <string name="desc_zoom_out">Zoom out</string>
+    <string name="desc_location">Center on location</string>
+    <string name="desc_fuel_type">Toggle fuel type</string>
+    <string name="desc_nearby">Show nearby stations</string>
+    <string name="desc_sort">Toggle sort method</string>
 </resources>

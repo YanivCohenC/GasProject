@@ -1,4 +1,4 @@
-package com.yaniv.gasproject.DatabaseHandler;
+package com.yaniv.gasproject.dao;
 
 import android.util.Log;
 import com.google.firebase.database.DataSnapshot;

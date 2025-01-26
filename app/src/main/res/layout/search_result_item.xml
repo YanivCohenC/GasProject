@@ -21,12 +21,28 @@
         android:textSize="14sp"
         android:textColor="#666666" />
 
-    <TextView
-        android:id="@+id/stationPrice"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="14sp"
-        android:textColor="#FF4081"
-        android:textStyle="bold" />
+        android:orientation="horizontal"
+        android:layout_marginTop="4dp">
+
+        <TextView
+            android:id="@+id/stationPrice"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="14sp"
+            android:textColor="#FF4081"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/stationDistance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:textColor="#2196F3"
+            android:textStyle="bold" />
+    </LinearLayout>
 
 </LinearLayout> 
