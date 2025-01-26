@@ -1,11 +1,12 @@
 package com.yaniv.gasproject.dm;
 
+/** @noinspection unused*/
 public class FuelPrices {
     private double petrol_95;
-    private double petrol_98;
+    private final double petrol_98;
     private double diesel;
 
-    // No-argument constructor required for Firebase
+    // Required empty constructor for Firebase
     public FuelPrices() {
         this.petrol_95 = 0;
         this.petrol_98 = 0;
@@ -19,7 +20,6 @@ public class FuelPrices {
     }
 
     // Getters and setters
-
     public double getDiesel() {
         return diesel;
     }
@@ -30,10 +30,6 @@ public class FuelPrices {
 
     public double getPetrol_98() {
         return petrol_98;
-    }
-
-    public void setPetrol_98(double petrol_98) {
-        this.petrol_98 = petrol_98;
     }
 
     public double getPetrol_95() {

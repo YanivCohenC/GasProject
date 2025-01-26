@@ -1,5 +1,6 @@
 package com.yaniv.gasproject;
 
+import android.annotation.SuppressLint;
 import android.location.Location;
 import android.location.LocationListener;
 import android.os.Bundle;
@@ -36,8 +37,8 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
     private MapManager mapManager;
     private LocationHelper locationHelper;
     private GasStationDataManager dataManager;
-    private UIManager uiManager;
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,7 +59,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         map.setTileSource(TileSourceFactory.MAPNIK);
         map.getController().setZoom(15.0);
         map.setMultiTouchControls(true);
-        map.setBuiltInZoomControls(false);  // Using custom zoom controls instead
 
         // Close info windows when touching the map
         map.setOnTouchListener((v, event) -> {
@@ -67,19 +67,15 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         });
 
         // Setup custom zoom controls
-        findViewById(R.id.zoom_in_fab).setOnClickListener(v -> {
-            map.getController().zoomIn();
-        });
+        findViewById(R.id.zoom_in_fab).setOnClickListener(v -> map.getController().zoomIn());
 
-        findViewById(R.id.zoom_out_fab).setOnClickListener(v -> {
-            map.getController().zoomOut();
-        });
+        findViewById(R.id.zoom_out_fab).setOnClickListener(v -> map.getController().zoomOut());
 
         // Initialize all manager classes
         mapManager = new MapManager(this, map);
         locationHelper = new LocationHelper(this, map);
         dataManager = new GasStationDataManager(this, this);
-        uiManager = new UIManager(this, locationHelper, mapManager, dataManager);
+        UIManager uiManager = new UIManager(this, locationHelper, mapManager, dataManager);
 
         // Setup UI components and check location permissions
         uiManager.setupUI();
@@ -90,7 +86,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
      * Initiates location permission check using LocationHelper
      */
     private void checkLocationPermission() {
-        locationHelper.checkLocationPermission(() -> startLocationUpdates());
+        locationHelper.checkLocationPermission(this::startLocationUpdates);
     }
 
     @Override
@@ -98,7 +94,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         locationHelper.handlePermissionResult(requestCode, grantResults,
             // If permission granted, start location updates
-            () -> startLocationUpdates(),
+                this::startLocationUpdates,
             // If permission denied, set default location to Israel center
             () -> {
                 mapManager.animateToLocation(new GeoPoint(31.7683, 35.2137), 15.0);

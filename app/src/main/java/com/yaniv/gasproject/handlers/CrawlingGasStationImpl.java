@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Set;
 
 public class CrawlingGasStationImpl implements IGasStationHandler {
@@ -103,13 +104,12 @@ public class CrawlingGasStationImpl implements IGasStationHandler {
                         } else {
                             Log.d(TAG, "No image found with class starting with alignnone");
                         }
-                        String stationURL = parent.select("[href]").first().absUrl("href");
                     }
                     Geocoder geocode = new Geocoder(context, Locale.getDefault());
-                    Address address = geocode.getFromLocationName(stationText, 1).get(0);
-                    Double double95 = 0.0;
-                    Double double98 = 0.0;
-                    Double doubleDiesel = 0.0;
+                    Address address = Objects.requireNonNull(geocode.getFromLocationName(stationText, 1)).get(0);
+                    double double95 = 0.0;
+                    double double98 = 0.0;
+                    double doubleDiesel = 0.0;
                     if (!price95.isEmpty())
                         double95 = Double.parseDouble(price95);
                     if (!price98.isEmpty())
@@ -121,26 +121,14 @@ public class CrawlingGasStationImpl implements IGasStationHandler {
                     Log.d(TAG, "Added station: " + stationText + " (Company: " + company + ")");
                 } catch (Exception e) {
                     Log.e(TAG, "Error processing station element", e);
-                    continue;
                 }
             }
             
             Log.d(TAG, "Total stations found: " + stations.size());
         } catch (Exception e) {
             Log.e(TAG, "Error fetching stations", e);
-            e.printStackTrace();
         }
         return stations;
-    }
-    
-    private double parsePrice(String priceStr) {
-        try {
-            // Remove any non-numeric characters except decimal point
-            priceStr = priceStr.replaceAll("[^0-9.]", "");
-            return Double.parseDouble(priceStr);
-        } catch (NumberFormatException e) {
-            return 0.0;
-        }
     }
 
     public List<GasStation> getStations() {

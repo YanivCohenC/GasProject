@@ -1,5 +1,11 @@
 package com.yaniv.gasproject.handlers;
 
+import static android.content.ContentValues.TAG;
+
+import android.util.Log;
+
+import androidx.annotation.NonNull;
+
 import com.yaniv.gasproject.dm.GasStation;
 
 import java.io.IOException;
@@ -24,10 +30,10 @@ public interface IGasStationHandler {
         Call call = httpClient.newCall(request);
         CompletableFuture<String> future = new CompletableFuture<>();
         call.enqueue(new Callback() {
-            public void onResponse(Call call, Response response)
-                    throws IOException {
+            public void onResponse(@NonNull Call call, @NonNull Response response) {
                 try {
                     if (response.isSuccessful()) {
+                        assert response.body() != null;
                         future.complete(response.body().string());
                     } else {
                         future.completeExceptionally(new IOException("Request failed: " + response.code()));
@@ -37,15 +43,14 @@ public interface IGasStationHandler {
                 }
             }
 
-            public void onFailure(Call call, IOException e) {
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 future.completeExceptionally(e);
             }
         });
         try {
-            String res = future.get();
-            return res;
+            return future.get();
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e(TAG, "Error getting HTTP response", e);
         }
         return "";
     }

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/info_window_background"
+    android:orientation="vertical"
+    android:padding="12dp">
+
+    <TextView
+        android:id="@+id/info_window_content"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:textDirection="rtl"
+        android:layoutDirection="rtl"
+        android:textAlignment="viewStart"
+        android:textSize="12sp"
+        android:lineSpacingExtra="2dp"
+        android:fontFamily="sans-serif"
+        android:textColor="#000000" />
+
+    <Button
+        android:id="@+id/navigate_button"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginTop="8dp"
+        android:text="🚗 נווט לתחנה"
+        android:textSize="12sp"
+        android:textAllCaps="false"
+        android:backgroundTint="#0077cc" />
+
+</LinearLayout> 

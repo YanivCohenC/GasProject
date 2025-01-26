@@ -1,6 +1,9 @@
 package com.yaniv.gasproject.dao;
 
 import android.util.Log;
+
+import androidx.annotation.NonNull;
+
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -56,7 +59,7 @@ public class GenericFirebaseImpl implements IFirebaseDao {
 
         stationsRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot stationSnapshot : dataSnapshot.getChildren()) {
                     try {
                         GasStation station = stationSnapshot.getValue(GasStation.class);
@@ -72,7 +75,7 @@ public class GenericFirebaseImpl implements IFirebaseDao {
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
+            public void onCancelled(@NonNull DatabaseError databaseError) {
                 Log.e(TAG, "Error reading from database", databaseError.toException());
                 future.completeExceptionally(databaseError.toException());
             }

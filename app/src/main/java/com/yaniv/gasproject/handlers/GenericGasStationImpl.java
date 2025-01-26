@@ -42,10 +42,8 @@ public class GenericGasStationImpl implements IGasStationHandler{
         // Constants for ITM to WGS84 conversion
         final double k0 = 1.0000067;
         final double a = 6378137.0;
-        final double e = 0.081819191042816;
         final double lon0 = 0.61443473225468920;  // 35.2045169444444 degrees
         final double lat0 = 0.55386965463774187;  // 31.7343936111111 degrees
-        final double n = 0.6145667421719;
         final double false_e = 219529.584;
         final double false_n = 626907.390;
 
@@ -114,11 +112,9 @@ public class GenericGasStationImpl implements IGasStationHandler{
             Log.d(TAG, "Total stations loaded from JSON: " + stations.size());
 
         } catch (IOException e) {
-            Log.e(TAG, "Error reading JSON file: " + e.getMessage());
-            e.printStackTrace();
+            Log.e(TAG, "Error reading JSON file: ", e);
         } catch (Exception e) {
-            Log.e(TAG, "Error parsing JSON: " + e.getMessage());
-            e.printStackTrace();
+            Log.e(TAG, "Error parsing JSON: ", e);
         }
 
         return stations;

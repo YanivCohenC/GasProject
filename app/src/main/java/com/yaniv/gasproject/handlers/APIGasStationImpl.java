@@ -1,6 +1,9 @@
 package com.yaniv.gasproject.handlers;
 
+import static android.content.ContentValues.TAG;
 import static java.lang.Double.max;
+
+import android.util.Log;
 
 import com.yaniv.gasproject.dm.FuelPrices;
 import com.yaniv.gasproject.dm.GPS;
@@ -29,7 +32,7 @@ public class APIGasStationImpl implements IGasStationHandler {
     public APIGasStationImpl(String query, String source) {
         this.query = query;
         this.source = source;
-        this.defaultPrices = new FuelPrices(0,0,0);
+        defaultPrices = new FuelPrices(0,0,0);
         this.stations = fetchGasStations(query, source);
     }
 
@@ -82,7 +85,7 @@ public class APIGasStationImpl implements IGasStationHandler {
                     JsonObject dayObj = entry.getValue().getAsJsonObject();
                     JsonArray hoursArr = dayObj.getAsJsonArray("hoursArr");
 
-                    if (hoursArr != null && hoursArr.size() > 0) {
+                    if (hoursArr != null && !hoursArr.isEmpty()) {
                         JsonObject hours = hoursArr.get(0).getAsJsonObject();
                         String fromHour = hours.get("from_hour").getAsString();
                         String toHour = hours.get("to_hour").getAsString();
@@ -110,7 +113,7 @@ public class APIGasStationImpl implements IGasStationHandler {
                     petrol95 = max(fuel95.get("self_service").getAsDouble(), fuel95.get("cash").getAsDouble());
 
                     // If self_service price is 0.0, use regulated price
-                    if (petrol95 == 0.0 && regulatedPricePetrol95 > 0.0) {
+                    if (petrol95 == 0.0) {
                         petrol95 = regulatedPricePetrol95;
                     }
                 }
@@ -124,19 +127,19 @@ public class APIGasStationImpl implements IGasStationHandler {
                     JsonObject fuelDiesel = byFuelType.getAsJsonObject("0");
                     diesel = max(fuelDiesel.get("self_service").getAsDouble(), fuelDiesel.get("cash").getAsDouble());
                     // If self_service price is 0.0, use regulated price
-                    if (diesel == 0.0 && regulatedPriceDiesel > 0.0) {
+                    if (diesel == 0.0) {
                         diesel = regulatedPriceDiesel;
                     }
                 }
 
                 // Get unique id from API
-                id = Integer.valueOf(station.get("id").getAsString());
+                id = Integer.parseInt(station.get("id").getAsString());
 
                 GasStation gasStation = new GasStation(id, address, "טן", new GPS(lat, lng), openingHours.toString(), new FuelPrices(petrol98, petrol95, diesel));
                 stations.add(gasStation);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e(TAG, "Error parsing station data", e);
         }
         return stations;
     }
