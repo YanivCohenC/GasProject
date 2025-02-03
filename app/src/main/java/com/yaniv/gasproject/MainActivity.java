@@ -1,10 +1,10 @@
 package com.yaniv.gasproject;
 
-import android.annotation.SuppressLint;
+import android.content.Context;
 import android.location.Location;
 import android.location.LocationListener;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -21,9 +21,11 @@ import com.yaniv.gasproject.utils.MapManager;
 import com.yaniv.gasproject.utils.UIManager;
 
 import org.osmdroid.config.Configuration;
+import org.osmdroid.events.MapEventsReceiver;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.MapEventsOverlay;
 import org.osmdroid.views.overlay.infowindow.InfoWindow;
 
 import java.util.List;
@@ -38,14 +40,12 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
     private LocationHelper locationHelper;
     private GasStationDataManager dataManager;
 
-    /** @noinspection deprecation*/
-    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        Context context = getApplicationContext();
         // Initialize osmdroid configuration for map display
-        Configuration.getInstance().load(getApplicationContext(), PreferenceManager.getDefaultSharedPreferences(getApplicationContext()));
+        Configuration.getInstance().load(context, context.getSharedPreferences(context.getPackageName() + "_preferences", Context.MODE_PRIVATE));
 
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
@@ -61,22 +61,34 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         map.getController().setZoom(15.0);
         map.setMultiTouchControls(true);
 
-        // Close info windows when touching the map
-        map.setOnTouchListener((v, event) -> {
-            InfoWindow.closeAllInfoWindowsOn(map);
-            return false; // Don't consume the event, let it propagate
-        });
-
-        // Setup custom zoom controls
-        findViewById(R.id.zoom_in_fab).setOnClickListener(v -> map.getController().zoomIn());
-
-        findViewById(R.id.zoom_out_fab).setOnClickListener(v -> map.getController().zoomOut());
-
         // Initialize all manager classes
         mapManager = new MapManager(this, map);
         locationHelper = new LocationHelper(this, map);
         dataManager = new GasStationDataManager(this, this);
         UIManager uiManager = new UIManager(this, locationHelper, mapManager, dataManager);
+
+        // Close info windows and lists when touching the map
+        MapEventsOverlay mapEventsOverlay = new MapEventsOverlay(new MapEventsReceiver() {
+            @Override
+            public boolean singleTapConfirmedHelper(GeoPoint p) {
+                InfoWindow.closeAllInfoWindowsOn(map);
+                // Hide search results and nearby list
+                findViewById(R.id.searchResultsRecyclerView).setVisibility(View.GONE);
+                uiManager.closeNearbyList();
+                return false;
+            }
+
+            @Override
+            public boolean longPressHelper(GeoPoint p) {
+                return false;
+            }
+        });
+        map.getOverlays().add(mapEventsOverlay);
+
+        // Setup custom zoom controls
+        findViewById(R.id.zoom_in_fab).setOnClickListener(v -> map.getController().zoomIn());
+
+        findViewById(R.id.zoom_out_fab).setOnClickListener(v -> map.getController().zoomOut());
 
         // Setup UI components and check location permissions
         uiManager.setupUI();

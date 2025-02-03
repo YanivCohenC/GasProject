@@ -19,6 +19,8 @@ import com.yaniv.gasproject.dm.GasStation;
 import org.osmdroid.util.GeoPoint;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Manages all UI components and their interactions in the app.
@@ -43,7 +45,10 @@ public class UIManager {
     
     private ExtendedFloatingActionButton fuelTypeFab;
     private ExtendedFloatingActionButton sortFab;
-    private static final float MAX_NEARBY_DISTANCE = 25000; // 25km in meters
+    private static final float MAX_NEARBY_DISTANCE = 15000; // in meters
+    private boolean isProcessingFuelTypeChange = false; // Flag to prevent rapid clicks
+
+    private String currentSearchQuery = "";  // Store current search query
 
     public UIManager(Activity activity, LocationHelper locationHelper, MapManager mapManager, GasStationDataManager dataManager) {
         this.activity = activity;
@@ -88,15 +93,30 @@ public class UIManager {
     private void setupFuelTypeFAB() {
         fuelTypeFab = activity.findViewById(R.id.fuel_type_fab);
         fuelTypeFab.setOnClickListener(v -> {
+            // If already processing a change, ignore the click
+            if (isProcessingFuelTypeChange) {
+                return;
+            }
+            
+            isProcessingFuelTypeChange = true;
             showingDiesel = !showingDiesel;
-            fuelTypeFab.setText(showingDiesel ? "Type: Diesel" : "Type: 95");
+            fuelTypeFab.setText(showingDiesel ? R.string.fuel_type_diesel : R.string.fuel_type_95);
             
             // Update all views to show the selected fuel type
             mapManager.setShowingDiesel(showingDiesel);
             searchResultsAdapter.setShowingDiesel(showingDiesel);
             nearbyStationsAdapter.setShowingDiesel(showingDiesel);
             
-            mapManager.updateMarkers(dataManager.getAllStations(), locationHelper.getLastLocation());
+            // Reapply current filter with new fuel type
+            filterStations(currentSearchQuery);
+            
+            // Update nearby stations with new fuel type
+            if (showingNearbyList) {
+                updateNearbyStations();
+            }
+            
+            // Reset the processing flag after a short delay to prevent rapid clicks
+            fuelTypeFab.postDelayed(() -> isProcessingFuelTypeChange = false, 500);
         });
     }
 
@@ -130,16 +150,14 @@ public class UIManager {
         sortFab = activity.findViewById(R.id.sort_fab);
         sortFab.setOnClickListener(v -> {
             sortByPrice = !sortByPrice;
-            sortFab.setText(sortByPrice ? "Sort: Price" : "Sort: Distance");
+            sortFab.setText(sortByPrice ? R.string.sort_by_price : R.string.sort_by_distance);
             
             // Update both lists with new sorting
             if (showingNearbyList) {
-                updateNearbyStations();
+                updateNearbyStations();  // This will now maintain filtered state
             }
             if (searchResultsRecyclerView.getVisibility() == View.VISIBLE) {
-                String currentQuery = ((SearchView) activity.findViewById(R.id.searchView))
-                    .getQuery().toString();
-                filterStations(currentQuery);
+                filterStations(currentSearchQuery);  // Re-apply current filter with new sort
             }
         });
     }
@@ -183,9 +201,11 @@ public class UIManager {
     private void setupNearbyStationsList() {
         nearbyStationsRecyclerView = activity.findViewById(R.id.nearbyStationsRecyclerView);
         nearbyStationsRecyclerView.setLayoutManager(new LinearLayoutManager(activity));
+        Button nearbyButton = activity.findViewById(R.id.nearby_fab);
         nearbyStationsAdapter = new NearbyStationsAdapter(station -> {
             nearbyStationsRecyclerView.setVisibility(View.GONE);
             showingNearbyList = false;
+            nearbyButton.setText(R.string.nearby_hide);
             locationHelper.disableFollowLocation();
             mapManager.animateToLocation(
                 new GeoPoint(station.getGps().getLat(), station.getGps().getLng()),
@@ -209,12 +229,27 @@ public class UIManager {
 
         nearbyStationsAdapter.setStations(nearbyStations);
         
+        // Re-apply current filter if exists
+        if (currentSearchQuery != null && !currentSearchQuery.trim().isEmpty()) {
+            List<GasStation> filteredStations = dataManager.filterStations(
+                currentSearchQuery,
+                userLocation,
+                showingDiesel,
+                sortByPrice
+            );
+            Set<Integer> filteredStationIds = filteredStations.stream()
+                .map(GasStation::getId)
+                .collect(Collectors.toSet());
+            nearbyStationsAdapter.updateDisabledStations(filteredStationIds);
+        }
+        
         if (nearbyStations.isEmpty()) {
-            Toast.makeText(activity, "No stations found within 25km", Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, "No stations found within " + MAX_NEARBY_DISTANCE / 1000 + "km", Toast.LENGTH_SHORT).show();
         }
     }
 
     private void filterStations(String query) {
+        currentSearchQuery = query;  // Store the query
         List<GasStation> filteredStations = dataManager.filterStations(
             query,
             locationHelper.getLastLocation(),
@@ -224,6 +259,17 @@ public class UIManager {
 
         mapManager.updateMarkers(filteredStations, locationHelper.getLastLocation());
 
+        // Update nearby stations list to grey out non-matching stations
+        if (query != null && !query.trim().isEmpty()) {
+            Set<Integer> filteredStationIds = filteredStations.stream()
+                .map(GasStation::getId)
+                .collect(Collectors.toSet());
+            nearbyStationsAdapter.updateDisabledStations(filteredStationIds);
+        } else {
+            nearbyStationsAdapter.clearDisabledStations();
+        }
+
+        // Update search results visibility
         if (query == null || query.trim().isEmpty()) {
             searchResultsRecyclerView.setVisibility(View.GONE);
         } else if (!filteredStations.isEmpty()) {
@@ -231,6 +277,18 @@ public class UIManager {
             searchResultsRecyclerView.setVisibility(View.VISIBLE);
         } else {
             searchResultsRecyclerView.setVisibility(View.GONE);
+        }
+    }
+
+    /**
+     * Closes the nearby stations list and updates UI state
+     */
+    public void closeNearbyList() {
+        if (showingNearbyList) {
+            showingNearbyList = false;
+            nearbyStationsRecyclerView.setVisibility(View.GONE);
+            Button nearbyButton = activity.findViewById(R.id.nearby_fab);
+            nearbyButton.setText(R.string.nearby_hide);
         }
     }
 } 
