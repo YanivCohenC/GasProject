@@ -4,12 +4,16 @@
     <string name="search_hint">Search by address</string>
     
     <!-- Button text -->
-    <string name="fuel_type_95">Type: 95</string>
-    <string name="fuel_type_diesel">Type: Diesel</string>
+    <string name="fuel_type_95">95</string>
+    <string name="fuel_type_diesel">DSL</string>
     <string name="nearby_show">Nearby: Show</string>
     <string name="nearby_hide">Nearby: Hide</string>
     <string name="sort_by_distance">Sort: Distance</string>
     <string name="sort_by_price">Sort: Price</string>
+    <string name="show_generic">Generic: Show</string>
+    <string name="hide_generic">Generic: Hide</string>
+    <string name="fuel_95">95</string>
+    <string name="fuel_diesel">DSL</string>
     
     <!-- Content descriptions -->
     <string name="desc_zoom_in">Zoom in</string>
@@ -18,5 +22,6 @@
     <string name="desc_fuel_type">Toggle fuel type</string>
     <string name="desc_nearby">Show nearby stations</string>
     <string name="desc_sort">Toggle sort method</string>
+    <string name="desc_generic">Toggle generic stations</string>
     <string name="driveToStation">Navigate to station</string>
 </resources>

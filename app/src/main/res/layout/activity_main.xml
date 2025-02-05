@@ -92,33 +92,50 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
+        android:layout_marginHorizontal="8dp"
         android:gravity="center_horizontal"
         android:orientation="horizontal"
-        android:paddingHorizontal="16dp"
+        android:paddingHorizontal="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
         <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-            android:id="@+id/fuel_type_fab"
+            android:id="@+id/generic_fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:minWidth="100dp"
+            android:minWidth="48dp"
             android:backgroundTint="#0077cc"
-            android:contentDescription="@string/desc_fuel_type"
-            android:text="@string/fuel_type_95"
+            android:contentDescription="@string/desc_generic"
+            app:icon="@drawable/ic_generic_stations"
+            app:iconTint="@null"
             android:textSize="13sp"
             android:textColor="#CAEBFF" />
 
         <Space
-            android:layout_width="8dp"
+            android:layout_width="4dp"
+            android:layout_height="wrap_content" />
+
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/fuel_type_fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minWidth="48dp"
+            android:backgroundTint="#0077cc"
+            android:contentDescription="@string/desc_fuel_type"
+            android:text="@string/fuel_95"
+            android:textSize="13sp"
+            android:textColor="#CAEBFF" />
+
+        <Space
+            android:layout_width="4dp"
             android:layout_height="wrap_content" />
 
         <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
             android:id="@+id/nearby_fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:minWidth="100dp"
+            android:minWidth="90dp"
             android:backgroundTint="#0077cc"
             android:contentDescription="@string/desc_nearby"
             android:text="@string/nearby_hide"
@@ -126,14 +143,14 @@
             android:textColor="#CAEBFF" />
 
         <Space
-            android:layout_width="8dp"
+            android:layout_width="4dp"
             android:layout_height="wrap_content" />
 
         <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
             android:id="@+id/sort_fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:minWidth="100dp"
+            android:minWidth="90dp"
             android:backgroundTint="#0077cc"
             android:contentDescription="@string/desc_sort"
             android:text="@string/sort_by_distance"

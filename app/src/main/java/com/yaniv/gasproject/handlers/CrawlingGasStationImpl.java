@@ -116,7 +116,7 @@ public class CrawlingGasStationImpl implements IGasStationHandler {
                         double98 = Double.parseDouble(price98);
                     if (!dieselPrice.isEmpty())
                         doubleDiesel = Double.parseDouble(dieselPrice);
-                    GasStation station = new GasStation(id++, stationText, company, new GPS(address.getLatitude(), address.getLongitude()), openingHours, new FuelPrices(double98,double95,doubleDiesel));
+                    GasStation station = new GasStation(id++, stationText, company, new GPS(address.getLatitude(), address.getLongitude()), openingHours, new FuelPrices(double98,double95,doubleDiesel), true);
                     stations.add(station);
                     Log.d(TAG, "Added station: " + stationText + " (Company: " + company + ")");
                 } catch (Exception e) {

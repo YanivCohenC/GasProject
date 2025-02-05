@@ -42,13 +42,14 @@ public class MarkerUtils {
      * Generates a unique cache key for a price marker bitmap
      * @param price The fuel price to display
      * @param isDiesel Whether the price is for diesel fuel
+     * @param isFromApi Whether the station is from API/Crawling
      * @return A unique string key for the bitmap cache
      */
-    private static String getCacheKey(double price, boolean isDiesel) {
-        return String.format(Locale.US, "%.2f_%b", price, isDiesel);
+    private static String getCacheKey(double price, boolean isDiesel, boolean isFromApi) {
+        return String.format(Locale.US, "%.2f_%b_%b", price, isDiesel, isFromApi);
     }
 
-    private static Bitmap createMarkerBitmap(Context context, double price) {
+    private static Bitmap createMarkerBitmap(Context context, double price, boolean isFromApi) {
         // Create a FrameLayout as the root view with wrap_content dimensions
         FrameLayout root = new FrameLayout(context);
         root.setLayoutParams(new FrameLayout.LayoutParams(
@@ -60,6 +61,9 @@ public class MarkerUtils {
         View markerView = LayoutInflater.from(context).inflate(R.layout.marker_layout, root, false);
         TextView priceText = markerView.findViewById(R.id.price_text);
         priceText.setText(String.format(Locale.US, "%.2f", price));
+        
+        // Set text color based on source
+        priceText.setTextColor(isFromApi ? 0xFFFFFFFF : 0xFFC0C0C0); // Green for API/Crawling, Pink for Generic
         
         markerView.measure(
             View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
@@ -210,12 +214,12 @@ public class MarkerUtils {
         double price = showingDiesel ? station.getFuel_prices().getDiesel() : station.getFuel_prices().getPetrol_95();
         
         // Try to get bitmap from cache
-        String cacheKey = getCacheKey(price, showingDiesel);
+        String cacheKey = getCacheKey(price, showingDiesel, station.isFromApi());
         Bitmap markerBitmap = bitmapCache.get(cacheKey);
         
         // Create and cache bitmap if not found
         if (markerBitmap == null) {
-            markerBitmap = createMarkerBitmap(context, price);
+            markerBitmap = createMarkerBitmap(context, price, station.isFromApi());
             bitmapCache.put(cacheKey, markerBitmap);
         }
         
