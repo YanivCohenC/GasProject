@@ -135,7 +135,7 @@ public class APIGasStationImpl implements IGasStationHandler {
                 // Get unique id from API
                 id = Integer.parseInt(station.get("id").getAsString());
 
-                GasStation gasStation = new GasStation(id, address, "טן", new GPS(lat, lng), openingHours.toString(), new FuelPrices(petrol98, petrol95, diesel));
+                GasStation gasStation = new GasStation(id, address, "טן", new GPS(lat, lng), openingHours.toString(), new FuelPrices(petrol98, petrol95, diesel), true);
                 stations.add(gasStation);
             }
         } catch (Exception e) {

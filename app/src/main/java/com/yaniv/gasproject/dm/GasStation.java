@@ -20,6 +20,8 @@ public class GasStation {
     private float distance;
     /** Current fuel prices at the station */
     private final FuelPrices fuel_prices;
+    /** Source of the gas station data (API/Crawling or Generic) */
+    private boolean isFromApi;
 
     /**
      * Default constructor required for Firebase integration.
@@ -32,6 +34,7 @@ public class GasStation {
         this.gps = new GPS(0, 0);
         this.opening_hours = "";
         this.fuel_prices = new FuelPrices(0, 0, 0);
+        this.isFromApi = false;
     }
 
     /**
@@ -43,14 +46,16 @@ public class GasStation {
      * @param gps Geographic coordinates
      * @param opening_hours Operating hours
      * @param prices Current fuel prices
+     * @param isFromApi Whether the station data is from API/Crawling (true) or Generic (false)
      */
-    public GasStation(int id, String address, String company, GPS gps, String opening_hours, FuelPrices prices) {
+    public GasStation(int id, String address, String company, GPS gps, String opening_hours, FuelPrices prices, boolean isFromApi) {
         this.id = id;
         this.address = address;
         this.company = company;
         this.gps = gps;
         this.opening_hours = opening_hours;
         this.fuel_prices = prices;
+        this.isFromApi = isFromApi;
     }
 
     // Getters and setters with descriptive comments
@@ -98,5 +103,21 @@ public class GasStation {
 
     public float getDistance() {
         return this.distance;
+    }
+
+    /**
+     * @return Whether the station data is from API/Crawling (true) or Generic (false)
+     */
+    public boolean isFromApi() {
+        return isFromApi;
+    }
+
+    /**
+     * Sets whether the station data is from API/Crawling
+     * @param fromApi true if from API/Crawling, false if Generic
+     * @noinspection unused
+     */
+    public void setFromApi(boolean fromApi) {
+        isFromApi = fromApi;
     }
 }

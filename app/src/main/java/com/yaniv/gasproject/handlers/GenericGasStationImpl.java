@@ -100,7 +100,8 @@ public class GenericGasStationImpl implements IGasStationHandler{
                             company,
                             coordinates,
                             null, // No opening hours in the data
-                            genericPrices // No prices in the data
+                            genericPrices, // No prices in the data
+                            false // Set isFromApi to false for generic stations
                     );
 
                     stations.add(gasStation);
