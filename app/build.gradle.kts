@@ -5,11 +5,12 @@ plugins {
 
 android {
     namespace = "com.yaniv.FullTank"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.yaniv.FullTank"
         minSdk = 24
+        //noinspection OldTargetApi
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
