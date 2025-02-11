@@ -1,4 +1,4 @@
-package com.yaniv.gasproject.handlers;
+package com.yaniv.FullTank.handlers;
 
 import static android.content.ContentValues.TAG;
 
@@ -6,7 +6,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import com.yaniv.gasproject.dm.GasStation;
+import com.yaniv.FullTank.dm.GasStation;
 
 import java.io.IOException;
 import java.util.List;

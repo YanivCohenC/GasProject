@@ -1,4 +1,4 @@
-package com.yaniv.gasproject.dm;
+package com.yaniv.FullTank.dm;
 
 /**
  * Represents geographic coordinates using latitude and longitude.

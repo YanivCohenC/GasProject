@@ -1,22 +1,21 @@
 {
   "project_info": {
-    "project_number": "542273364299",
-    "firebase_url": "https://gasproject-461fe-default-rtdb.europe-west1.firebasedatabase.app",
-    "project_id": "gasproject-461fe",
-    "storage_bucket": "gasproject-461fe.firebasestorage.app"
+    "project_number": "1045625693542",
+    "project_id": "fulltank-a5b8b",
+    "storage_bucket": "fulltank-a5b8b.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:542273364299:android:c62267a9a00bb396dd08ce",
+        "mobilesdk_app_id": "1:1045625693542:android:a003f2adf5eb9f98f014a7",
         "android_client_info": {
-          "package_name": "com.yaniv.gasproject"
+          "package_name": "com.yaniv.FullTank"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyDPuFW_grsUj0jA_tHlMsLpM0MFrvz1mXQ"
+          "current_key": "AIzaSyDprDFUY_Nt8A5KS_eb6_t-EVASJCksFVM"
         }
       ],
       "services": {

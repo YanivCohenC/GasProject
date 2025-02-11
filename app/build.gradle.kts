@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "com.yaniv.gasproject"
+    namespace = "com.yaniv.FullTank"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.yaniv.gasproject"
+        applicationId = "com.yaniv.FullTank"
         minSdk = 24
         targetSdk = 34
         versionCode = 1

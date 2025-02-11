@@ -1,9 +1,9 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <!-- Base application theme. -->
-    <style name="Base.Theme.GasProject" parent="Theme.Material3.DayNight.NoActionBar">
+    <style name="Base.Theme.FullTank" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
     </style>
 
-    <style name="Theme.GasProject" parent="Base.Theme.GasProject" />
+    <style name="Theme.FullTank" parent="Base.Theme.FullTank" />
 </resources>

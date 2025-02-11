@@ -12,13 +12,12 @@ pluginManagement {
     }
 }
 dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
         google()
         mavenCentral()
     }
 }
 
-rootProject.name = "GasProject"
+rootProject.name = "FullTank"
 include(":app")
  

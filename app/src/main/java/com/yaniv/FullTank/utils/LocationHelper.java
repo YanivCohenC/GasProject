@@ -1,4 +1,4 @@
-package com.yaniv.gasproject.utils;
+package com.yaniv.FullTank.utils;
 
 import android.Manifest;
 import android.app.Activity;

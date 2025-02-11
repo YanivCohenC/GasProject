@@ -1,13 +1,13 @@
-package com.yaniv.gasproject.handlers;
+package com.yaniv.FullTank.handlers;
 
 import static android.content.ContentValues.TAG;
 import static java.lang.Double.max;
 
 import android.util.Log;
 
-import com.yaniv.gasproject.dm.FuelPrices;
-import com.yaniv.gasproject.dm.GPS;
-import com.yaniv.gasproject.dm.GasStation;
+import com.yaniv.FullTank.dm.FuelPrices;
+import com.yaniv.FullTank.dm.GPS;
+import com.yaniv.FullTank.dm.GasStation;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;

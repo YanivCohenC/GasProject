@@ -1,6 +1,6 @@
-package com.yaniv.gasproject.dao;
+package com.yaniv.FullTank.dao;
 
-import com.yaniv.gasproject.dm.GasStation;
+import com.yaniv.FullTank.dm.GasStation;
 
 import java.util.List;
 

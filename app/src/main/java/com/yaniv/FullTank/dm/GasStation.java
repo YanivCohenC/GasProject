@@ -1,4 +1,4 @@
-package com.yaniv.gasproject.dm;
+package com.yaniv.FullTank.dm;
 
 /**
  * Represents a gas station entity in the application.

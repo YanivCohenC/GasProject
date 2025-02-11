@@ -1,4 +1,4 @@
-package com.yaniv.gasproject.dao;
+package com.yaniv.FullTank.dao;
 
 import android.util.Log;
 
@@ -9,7 +9,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.yaniv.gasproject.dm.GasStation;
+import com.yaniv.FullTank.dm.GasStation;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -22,7 +22,7 @@ public class GenericFirebaseImpl implements IFirebaseDao {
     private final DatabaseReference stationsRef;
 
     public GenericFirebaseImpl() {
-        database = FirebaseDatabase.getInstance();
+        database = FirebaseDatabase.getInstance("https://fulltank-a5b8b-default-rtdb.europe-west1.firebasedatabase.app/");
         stationsRef = database.getReference("stations");
     }
 

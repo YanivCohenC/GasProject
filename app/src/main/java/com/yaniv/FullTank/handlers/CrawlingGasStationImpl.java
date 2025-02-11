@@ -1,12 +1,12 @@
-package com.yaniv.gasproject.handlers;
+package com.yaniv.FullTank.handlers;
 
 import android.content.Context;
 import android.location.Address;
 import android.location.Geocoder;
 import android.util.Log;
-import com.yaniv.gasproject.dm.FuelPrices;
-import com.yaniv.gasproject.dm.GPS;
-import com.yaniv.gasproject.dm.GasStation;
+import com.yaniv.FullTank.dm.FuelPrices;
+import com.yaniv.FullTank.dm.GPS;
+import com.yaniv.FullTank.dm.GasStation;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;

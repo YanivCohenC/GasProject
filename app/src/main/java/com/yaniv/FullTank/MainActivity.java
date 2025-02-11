@@ -1,4 +1,4 @@
-package com.yaniv.gasproject;
+package com.yaniv.FullTank;
 
 import android.content.Context;
 import android.location.Location;
@@ -14,11 +14,11 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.yaniv.gasproject.dm.GasStation;
-import com.yaniv.gasproject.utils.GasStationDataManager;
-import com.yaniv.gasproject.utils.LocationHelper;
-import com.yaniv.gasproject.utils.MapManager;
-import com.yaniv.gasproject.utils.UIManager;
+import com.yaniv.FullTank.dm.GasStation;
+import com.yaniv.FullTank.utils.GasStationDataManager;
+import com.yaniv.FullTank.utils.LocationHelper;
+import com.yaniv.FullTank.utils.MapManager;
+import com.yaniv.FullTank.utils.UIManager;
 
 import org.osmdroid.config.Configuration;
 import org.osmdroid.events.MapEventsReceiver;

@@ -1,4 +1,4 @@
-package com.yaniv.gasproject.adapters;
+package com.yaniv.FullTank.adapters;
 
 import android.graphics.Color;
 import android.view.LayoutInflater;
@@ -10,8 +10,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.DiffUtil;
 
-import com.yaniv.gasproject.R;
-import com.yaniv.gasproject.dm.GasStation;
+import com.yaniv.FullTank.R;
+import com.yaniv.FullTank.dm.GasStation;
 
 import java.util.ArrayList;
 import java.util.HashSet;

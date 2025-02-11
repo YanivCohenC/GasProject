@@ -1,9 +1,9 @@
-package com.yaniv.gasproject.utils;
+package com.yaniv.FullTank.utils;
 
 import android.content.Context;
 import android.location.Location;
 
-import com.yaniv.gasproject.dm.GasStation;
+import com.yaniv.FullTank.dm.GasStation;
 
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;

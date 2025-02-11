@@ -1,4 +1,4 @@
-package com.yaniv.gasproject.utils;
+package com.yaniv.FullTank.utils;
 
 import android.content.Context;
 import android.location.Location;
@@ -6,12 +6,12 @@ import android.util.Log;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.yaniv.gasproject.dao.GenericFirebaseImpl;
-import com.yaniv.gasproject.dao.IFirebaseDao;
-import com.yaniv.gasproject.dm.GasStation;
-import com.yaniv.gasproject.handlers.APIGasStationImpl;
-import com.yaniv.gasproject.handlers.CrawlingGasStationImpl;
-import com.yaniv.gasproject.handlers.GenericGasStationImpl;
+import com.yaniv.FullTank.dao.GenericFirebaseImpl;
+import com.yaniv.FullTank.dao.IFirebaseDao;
+import com.yaniv.FullTank.dm.GasStation;
+import com.yaniv.FullTank.handlers.APIGasStationImpl;
+import com.yaniv.FullTank.handlers.CrawlingGasStationImpl;
+import com.yaniv.FullTank.handlers.GenericGasStationImpl;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -41,7 +41,7 @@ public class GasStationDataManager {
         callback.onLoadingStarted("Loading gas stations...");
 
         // Check last update date in Firebase
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        FirebaseDatabase database = FirebaseDatabase.getInstance("https://fulltank-a5b8b-default-rtdb.europe-west1.firebasedatabase.app/");
         DatabaseReference lastUpdatedRef = database.getReference("lastUpdated");
         
         lastUpdatedRef.get().addOnCompleteListener(task -> {

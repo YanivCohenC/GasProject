@@ -1,4 +1,4 @@
-package com.yaniv.gasproject.dm;
+package com.yaniv.FullTank.dm;
 
 /**
  * Represents the fuel prices at a gas station.

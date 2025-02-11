@@ -1,4 +1,4 @@
-package com.yaniv.gasproject.utils;
+package com.yaniv.FullTank.utils;
 
 import android.content.Context;
 import android.content.Intent;
@@ -14,8 +14,8 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.FrameLayout;
 
-import com.yaniv.gasproject.R;
-import com.yaniv.gasproject.dm.GasStation;
+import com.yaniv.FullTank.R;
+import com.yaniv.FullTank.dm.GasStation;
 
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;

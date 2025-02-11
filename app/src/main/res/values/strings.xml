@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">GasProject</string>
+    <string name="app_name">FullTank</string>
     <string name="search_hint">Search by address</string>
     
     <!-- Button text -->

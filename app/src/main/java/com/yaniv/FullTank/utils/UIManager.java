@@ -1,4 +1,4 @@
-package com.yaniv.gasproject.utils;
+package com.yaniv.FullTank.utils;
 
 import android.app.Activity;
 import android.location.Location;
@@ -11,10 +11,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
-import com.yaniv.gasproject.R;
-import com.yaniv.gasproject.adapters.NearbyStationsAdapter;
-import com.yaniv.gasproject.adapters.SearchResultsAdapter;
-import com.yaniv.gasproject.dm.GasStation;
+import com.yaniv.FullTank.R;
+import com.yaniv.FullTank.adapters.NearbyStationsAdapter;
+import com.yaniv.FullTank.adapters.SearchResultsAdapter;
+import com.yaniv.FullTank.dm.GasStation;
 
 import org.osmdroid.util.GeoPoint;
 
