@@ -26,9 +26,8 @@ import java.util.Set;
  */
 public class NearbyStationsAdapter extends RecyclerView.Adapter<NearbyStationsAdapter.ViewHolder> {
     /** List of gas stations to display */
-    private final List<GasStation> stations = new ArrayList<>();
-    private final Set<Integer> disabledStations = new HashSet<>();  // Store IDs of disabled stations
-    private final Object stationsLock = new Object();  // Lock object for synchronization
+    private List<GasStation> stations = new ArrayList<>();
+    private Set<Integer> disabledStations = new HashSet<>();  // Store IDs of disabled stations
     private final OnStationClickListener listener;
     private boolean showingDiesel = false;  // Controls which fuel price to display
 
@@ -83,31 +82,81 @@ public class NearbyStationsAdapter extends RecyclerView.Adapter<NearbyStationsAd
      * Updates the list of stations and refreshes the view while preserving disabled states
      */
     public void setStations(List<GasStation> newStations) {
+        List<GasStation> oldList = new ArrayList<>(stations);
         List<GasStation> newList = new ArrayList<>(newStations != null ? newStations : new ArrayList<>());
-        List<GasStation> oldList;
         
-        synchronized (stationsLock) {
-            oldList = new ArrayList<>(stations);
-            // Calculate the difference between old and new lists
-            DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new StationDiffCallback(oldList, newList));
+        // Calculate the difference between old and new lists
+        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new StationDiffCallback(oldList, newList));
 
-            // Store current disabled states
-            Set<Integer> currentDisabled = new HashSet<>(disabledStations);
+        // Store current disabled states
+        Set<Integer> currentDisabled = new HashSet<>(disabledStations);
+        
+        // Clear and update disabled states for new stations
+        Set<Integer> newDisabledStations = new HashSet<>();
+        for (GasStation station : newList) {
+            if (currentDisabled.contains(station.getId())) {
+                newDisabledStations.add(station.getId());
+            }
+        }
+
+        // Update the data atomically
+        stations = newList;
+        disabledStations = newDisabledStations;
+
+        // Dispatch updates to the RecyclerView
+        diffResult.dispatchUpdatesTo(this);
+    }
+
+    /**
+     * Updates the list of disabled stations
+     */
+    public void updateDisabledStations(Set<Integer> filteredStationIds) {
+        List<Integer> changedPositions = new ArrayList<>();
+        Set<Integer> newDisabledStations = new HashSet<>();
+        
+        for (int i = 0; i < stations.size(); i++) {
+            GasStation station = stations.get(i);
+            boolean wasDisabled = disabledStations.contains(station.getId());
+            boolean shouldBeDisabled = !filteredStationIds.contains(station.getId());
             
-            // Clear and update disabled states for new stations
-            disabledStations.clear();
-            for (GasStation station : newList) {
-                if (currentDisabled.contains(station.getId())) {
-                    disabledStations.add(station.getId());
+            if (shouldBeDisabled) {
+                newDisabledStations.add(station.getId());
+            }
+            
+            if (wasDisabled != shouldBeDisabled) {
+                changedPositions.add(i);
+            }
+        }
+        
+        // Update disabled stations atomically
+        disabledStations = newDisabledStations;
+        
+        // Notify only the items that changed state
+        for (int position : changedPositions) {
+            notifyItemChanged(position, "disabled_state_changed");
+        }
+    }
+
+    /**
+     * Clears all disabled states, making all stations clickable
+     */
+    public void clearDisabledStations() {
+        if (!disabledStations.isEmpty()) {
+            List<Integer> previouslyDisabledPositions = new ArrayList<>();
+            
+            for (int i = 0; i < stations.size(); i++) {
+                if (disabledStations.contains(stations.get(i).getId())) {
+                    previouslyDisabledPositions.add(i);
                 }
             }
-
-            // Update the data
-            stations.clear();
-            stations.addAll(newList);
-
-            // Dispatch updates to the RecyclerView
-            diffResult.dispatchUpdatesTo(this);
+            
+            // Clear disabled stations atomically
+            disabledStations = new HashSet<>();
+            
+            // Notify only the items that were enabled
+            for (int position : previouslyDisabledPositions) {
+                notifyItemChanged(position, "disabled_state_changed");
+            }
         }
     }
 
@@ -116,7 +165,6 @@ public class NearbyStationsAdapter extends RecyclerView.Adapter<NearbyStationsAd
      */
     public void setShowingDiesel(boolean showingDiesel) {
         this.showingDiesel = showingDiesel;
-        // Only price display is changing, notify with payload
         notifyItemRangeChanged(0, stations.size(), "price_type_changed");
     }
 
@@ -131,23 +179,15 @@ public class NearbyStationsAdapter extends RecyclerView.Adapter<NearbyStationsAd
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position, List<Object> payloads) {
         if (!payloads.isEmpty()) {
-            // Handle partial updates
+            GasStation station = stations.get(position);
             for (Object payload : payloads) {
                 if (payload.equals("price_type_changed")) {
                     // Update only the price
-                    GasStation station;
-                    synchronized (stationsLock) {
-                        station = stations.get(position);
-                    }
                     double price = showingDiesel ? station.getFuel_prices().getDiesel() : station.getFuel_prices().getPetrol_95();
                     holder.priceText.setText(String.format(Locale.US, "₪%.2f", price));
                     holder.priceText.setTextColor(Color.parseColor("#0077cc"));
                 } else if (payload.equals("disabled_state_changed")) {
                     // Update only the disabled state
-                    GasStation station;
-                    synchronized (stationsLock) {
-                        station = stations.get(position);
-                    }
                     boolean isDisabled = disabledStations.contains(station.getId());
                     float alpha = isDisabled ? 0.5f : 1.0f;
                     holder.companyText.setAlpha(alpha);
@@ -158,17 +198,13 @@ public class NearbyStationsAdapter extends RecyclerView.Adapter<NearbyStationsAd
                 }
             }
         } else {
-            // Full bind if no payload
             onBindViewHolder(holder, position);
         }
     }
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        GasStation station;
-        synchronized (stationsLock) {
-            station = stations.get(position);
-        }
+        GasStation station = stations.get(position);
         boolean isDisabled = disabledStations.contains(station.getId());
 
         // Set basic station information
@@ -206,63 +242,6 @@ public class NearbyStationsAdapter extends RecyclerView.Adapter<NearbyStationsAd
     @Override
     public int getItemCount() {
         return stations.size();
-    }
-
-    /**
-     * Updates the list of disabled stations
-     */
-    public void updateDisabledStations(Set<Integer> filteredStationIds) {
-        Set<Integer> previouslyDisabled = new HashSet<>(disabledStations);
-        disabledStations.clear();
-        
-        // Track which items actually changed state
-        List<Integer> changedPositions = new ArrayList<>();
-        
-        synchronized (stationsLock) {
-            for (int i = 0; i < stations.size(); i++) {
-                GasStation station = stations.get(i);
-                boolean wasDisabled = previouslyDisabled.contains(station.getId());
-                boolean shouldBeDisabled = !filteredStationIds.contains(station.getId());
-                
-                if (shouldBeDisabled) {
-                    disabledStations.add(station.getId());
-                }
-                
-                // If the disabled state changed, add to changed positions
-                if (wasDisabled != shouldBeDisabled) {
-                    changedPositions.add(i);
-                }
-            }
-        }
-        
-        // Notify only the items that changed state
-        for (int position : changedPositions) {
-            notifyItemChanged(position, "disabled_state_changed");
-        }
-    }
-
-    /**
-     * Clears all disabled states, making all stations clickable
-     */
-    public void clearDisabledStations() {
-        if (!disabledStations.isEmpty()) {
-            List<Integer> previouslyDisabledPositions = new ArrayList<>();
-            
-            synchronized (stationsLock) {
-                for (int i = 0; i < stations.size(); i++) {
-                    if (disabledStations.contains(stations.get(i).getId())) {
-                        previouslyDisabledPositions.add(i);
-                    }
-                }
-            }
-            
-            disabledStations.clear();
-            
-            // Notify only the items that were enabled
-            for (int position : previouslyDisabledPositions) {
-                notifyItemChanged(position, "disabled_state_changed");
-            }
-        }
     }
 
     /**

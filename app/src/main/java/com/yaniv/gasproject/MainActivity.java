@@ -132,6 +132,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
             map.getZoomLevelDouble()
         );
         // Update markers with new distances from current location
+        // The MapManager will handle filtering of generic stations
         mapManager.updateMarkers(dataManager.getAllStations(), location);
     }
 
@@ -140,6 +141,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
     public void onDataLoaded(List<GasStation> stations) {
         runOnUiThread(() -> {
             Location currentLocation = locationHelper.getLastLocation();
+            // The MapManager will handle filtering of generic stations
             mapManager.updateMarkers(stations, currentLocation);
             Toast.makeText(this, "Loaded " + stations.size() + " stations", Toast.LENGTH_SHORT).show();
         });

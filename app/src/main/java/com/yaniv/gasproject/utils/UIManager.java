@@ -50,6 +50,7 @@ public class UIManager {
     private ExtendedFloatingActionButton genericFab;
     private static final float MAX_NEARBY_DISTANCE = 15000; // in meters
     private boolean isProcessingFuelTypeChange = false; // Flag to prevent rapid clicks
+    private boolean isGenericUpdateInProgress = false;
 
     private String currentSearchQuery = "";  // Store current search query
 
@@ -173,32 +174,79 @@ public class UIManager {
      */
     private void setupGenericFAB() {
         genericFab = activity.findViewById(R.id.generic_fab);
-        // Set initial icon state - swapped from previous
+        // Set initial icon state and sync with MapManager
+        updateGenericFabIcon();
+        mapManager.setShowingGeneric(showingGeneric);
+        
+        genericFab.setOnClickListener(v -> {
+            // If an update is already in progress, ignore the click
+            if (isGenericUpdateInProgress) {
+                return;
+            }
+            
+            // Disable the button and start the update
+            isGenericUpdateInProgress = true;
+            genericFab.setEnabled(false);
+            
+            showingGeneric = !showingGeneric;
+            updateGenericFabIcon();
+            mapManager.setShowingGeneric(showingGeneric);
+            
+            // Update all views to reflect the new filter
+            updateAllViews();
+            
+            // Re-enable the button after a short delay
+            genericFab.postDelayed(() -> {
+                isGenericUpdateInProgress = false;
+                genericFab.setEnabled(true);
+            }, 300); // 300ms delay to prevent rapid clicks
+        });
+    }
+
+    /**
+     * Updates the generic FAB icon based on current state
+     */
+    private void updateGenericFabIcon() {
         genericFab.setIcon(androidx.appcompat.content.res.AppCompatResources.getDrawable(
             activity,
             showingGeneric ? R.drawable.ic_generic_stations_pressed : R.drawable.ic_generic_stations
         ));
+    }
+
+    /**
+     * Updates all views to reflect current filter state
+     */
+    private void updateAllViews() {
+        Location userLocation = locationHelper.getLastLocation();
         
-        genericFab.setOnClickListener(v -> {
-            showingGeneric = !showingGeneric;
-            // Toggle between light and dark icons - swapped from previous
-            genericFab.setIcon(androidx.appcompat.content.res.AppCompatResources.getDrawable(
-                activity,
-                showingGeneric ? R.drawable.ic_generic_stations_pressed : R.drawable.ic_generic_stations
-            ));
-            
-            // Update all views to reflect the new filter
-            if (showingNearbyList) {
-                updateNearbyStations();
+        // Update map markers - no need to filter here as MapManager will handle it
+        List<GasStation> stations = currentSearchQuery.isEmpty() ? 
+            dataManager.getAllStations() : 
+            dataManager.filterStations(currentSearchQuery, userLocation, showingDiesel, sortByPrice);
+        mapManager.updateMarkers(stations, userLocation);
+        
+        // Update nearby list if visible
+        if (showingNearbyList) {
+            updateNearbyStations();
+        }
+        
+        // Update search results if visible
+        if (searchResultsRecyclerView.getVisibility() == View.VISIBLE) {
+            filterStations(currentSearchQuery);
+        }
+    }
+
+    private List<GasStation> filterGenericStations(List<GasStation> stations) {
+        if (showingGeneric) {
+            return new ArrayList<>(stations); // Return a copy to prevent modification
+        }
+        List<GasStation> filteredStations = new ArrayList<>();
+        for (GasStation station : stations) {
+            if (station.isFromApi()) {
+                filteredStations.add(station);
             }
-            if (!currentSearchQuery.isEmpty()) {
-                filterStations(currentSearchQuery);
-            } else {
-                // If no search query, update markers with all visible stations
-                List<GasStation> visibleStations = filterGenericStations(dataManager.getAllStations());
-                mapManager.updateMarkers(visibleStations, locationHelper.getLastLocation());
-            }
-        });
+        }
+        return filteredStations;
     }
 
     /**
@@ -255,73 +303,27 @@ public class UIManager {
         nearbyStationsRecyclerView.setAdapter(nearbyStationsAdapter);
     }
 
-    private List<GasStation> filterGenericStations(List<GasStation> stations) {
-        if (showingGeneric) {
-            return stations;
-        }
-        List<GasStation> filteredStations = new ArrayList<>();
-        for (GasStation station : stations) {
-            if (station.isFromApi()) {
-                filteredStations.add(station);
-            }
-        }
-        return filteredStations;
-    }
-
-    private void updateNearbyStations() {
-        Location userLocation = locationHelper.getLastLocation();
-        if (userLocation == null) return;
-
-        List<GasStation> nearbyStations = dataManager.getNearbyStations(
-            userLocation,
-            showingDiesel,
-            sortByPrice,
-            MAX_NEARBY_DISTANCE
-        );
-
-        // Filter out generic stations if needed
-        nearbyStations = filterGenericStations(nearbyStations);
-
-        nearbyStationsAdapter.setStations(nearbyStations);
-        
-        // Re-apply current filter if exists
-        if (currentSearchQuery != null && !currentSearchQuery.trim().isEmpty()) {
-            List<GasStation> filteredStations = filterGenericStations(
-                dataManager.filterStations(
-                    currentSearchQuery,
-                    userLocation,
-                    showingDiesel,
-                    sortByPrice
-                )
-            );
-            Set<Integer> filteredStationIds = filteredStations.stream()
-                .map(GasStation::getId)
-                .collect(Collectors.toSet());
-            nearbyStationsAdapter.updateDisabledStations(filteredStationIds);
-        }
-        
-        if (nearbyStations.isEmpty()) {
-            Toast.makeText(activity, "No stations found within " + MAX_NEARBY_DISTANCE / 1000 + "km", Toast.LENGTH_SHORT).show();
-        }
-    }
-
     private void filterStations(String query) {
-        currentSearchQuery = query;  // Store the query
-        List<GasStation> filteredStations = dataManager.filterStations(
+        currentSearchQuery = query;
+        Location userLocation = locationHelper.getLastLocation();
+        
+        // First get stations based on search query
+        List<GasStation> searchFilteredStations = dataManager.filterStations(
             query,
-            locationHelper.getLastLocation(),
+            userLocation,
             showingDiesel,
             sortByPrice
         );
+        
+        // Then filter out generic stations if needed
+        List<GasStation> finalFilteredStations = filterGenericStations(searchFilteredStations);
 
-        // Filter out generic stations if needed
-        filteredStations = filterGenericStations(filteredStations);
-
-        mapManager.updateMarkers(filteredStations, locationHelper.getLastLocation());
+        // Update map markers
+        mapManager.updateMarkers(finalFilteredStations, userLocation);
 
         // Update nearby stations list to grey out non-matching stations
         if (query != null && !query.trim().isEmpty()) {
-            Set<Integer> filteredStationIds = filteredStations.stream()
+            Set<Integer> filteredStationIds = finalFilteredStations.stream()
                 .map(GasStation::getId)
                 .collect(Collectors.toSet());
             nearbyStationsAdapter.updateDisabledStations(filteredStationIds);
@@ -332,11 +334,49 @@ public class UIManager {
         // Update search results visibility
         if (query == null || query.trim().isEmpty()) {
             searchResultsRecyclerView.setVisibility(View.GONE);
-        } else if (!filteredStations.isEmpty()) {
-            searchResultsAdapter.setStations(filteredStations);
+        } else if (!finalFilteredStations.isEmpty()) {
+            searchResultsAdapter.setStations(finalFilteredStations);
             searchResultsRecyclerView.setVisibility(View.VISIBLE);
         } else {
             searchResultsRecyclerView.setVisibility(View.GONE);
+        }
+    }
+
+    private void updateNearbyStations() {
+        Location userLocation = locationHelper.getLastLocation();
+        if (userLocation == null) return;
+
+        // Get nearby stations
+        List<GasStation> nearbyStations = dataManager.getNearbyStations(
+            userLocation,
+            showingDiesel,
+            sortByPrice,
+            MAX_NEARBY_DISTANCE
+        );
+
+        // Filter out generic stations if needed
+        List<GasStation> filteredNearbyStations = filterGenericStations(nearbyStations);
+
+        nearbyStationsAdapter.setStations(filteredNearbyStations);
+        
+        // Re-apply current filter if exists
+        if (!currentSearchQuery.trim().isEmpty()) {
+            List<GasStation> searchFilteredStations = filterGenericStations(
+                dataManager.filterStations(
+                    currentSearchQuery,
+                    userLocation,
+                    showingDiesel,
+                    sortByPrice
+                )
+            );
+            Set<Integer> filteredStationIds = searchFilteredStations.stream()
+                .map(GasStation::getId)
+                .collect(Collectors.toSet());
+            nearbyStationsAdapter.updateDisabledStations(filteredStationIds);
+        }
+        
+        if (filteredNearbyStations.isEmpty()) {
+            Toast.makeText(activity, "No stations found within " + MAX_NEARBY_DISTANCE / 1000 + "km", Toast.LENGTH_SHORT).show();
         }
     }
 

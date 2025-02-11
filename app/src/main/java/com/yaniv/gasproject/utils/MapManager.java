@@ -20,10 +20,28 @@ public class MapManager {
     private final List<Marker> markers = new ArrayList<>();
     private final Map<GeoPoint, Marker> markerMap = new HashMap<>();
     private boolean showingDiesel = false;
+    private boolean showingGeneric = true;
 
     public MapManager(Context context, MapView map) {
         this.context = context;
         this.map = map;
+    }
+
+    public void setShowingGeneric(boolean showGeneric) {
+        this.showingGeneric = showGeneric;
+    }
+
+    private List<GasStation> filterGenericStations(List<GasStation> stations) {
+        if (showingGeneric) {
+            return new ArrayList<>(stations);
+        }
+        List<GasStation> filteredStations = new ArrayList<>();
+        for (GasStation station : stations) {
+            if (station.isFromApi()) {
+                filteredStations.add(station);
+            }
+        }
+        return filteredStations;
     }
 
     public void clearMarkers() {
@@ -44,7 +62,8 @@ public class MapManager {
 
     public void updateMarkers(List<GasStation> stations, Location userLocation) {
         clearMarkers();
-        for (GasStation station : stations) {
+        List<GasStation> filteredStations = filterGenericStations(stations);
+        for (GasStation station : filteredStations) {
             addMarker(station, userLocation);
         }
         map.invalidate();
